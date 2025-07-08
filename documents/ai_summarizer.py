@@ -1,6 +1,6 @@
 # documents/ai_summarizer.py
 
-from transformers import pipeline
+from transformers.pipelines import pipeline
 import logging
 
 # Load the HuggingFace summarization model once
