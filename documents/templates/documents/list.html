@@ -72,6 +72,14 @@ tbody td {
   caret-color: #ffffff;
 }
 
+.clickable-row {
+  cursor: pointer;
+}
+
+.clickable-row:hover {
+  background-color: #2c2c2c;
+}
+
     </style>
 
     <title>Hello, world!</title>
@@ -113,7 +121,7 @@ tbody td {
                     </thead>
                     <tbody>
                       {% for doc in documents %}
-                        <tr>
+                        <tr class="clickable-row" data-href="{% url 'document_detail' doc.pk %}">
                           <td>{{ doc.user.username }}</td>
                           <td>{{ doc.title }}</td>
                           <td>{{ doc.category }}</td>
@@ -174,8 +182,53 @@ tbody td {
       });
     });
   });
-</script>
 
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.clickable-row').forEach(row => {
+      row.addEventListener('click', function () {
+        window.location.href = row.getAttribute('data-href');
+      });
+    });
+  });
+</script>  
+
+
+
+{% comment %} <script>
+document.addEventListener('DOMContentLoaded', function () {
+  const input = document.getElementById('searchInput');
+  const tableBody = document.querySelector('table tbody');
+
+  input.addEventListener('keyup', function () {
+    const query = input.value;
+
+    fetch(`/ajax-search/?q=${query}`)
+      .then(response => response.json())
+      .then(data => {
+        tableBody.innerHTML = '';
+
+        if (data.documents.length === 0) {
+          tableBody.innerHTML = '<tr><td colspan="6">No documents found.</td></tr>';
+          return;
+        }
+
+        data.documents.forEach(doc => {
+          const row = `
+            <tr>
+              <td>${doc.user}</td>
+              <td>${doc.title}</td>
+              <td>${doc.category}</td>
+              <td>${doc.summary}</td>
+              <td><a href="${doc.file_url}" target="_blank" class="btn btn-sm btn-outline-light">View</a></td>
+              <td>${doc.uploaded_at}</td>
+            </tr>
+          `;
+          tableBody.innerHTML += row;
+        });
+      });
+  });
+});
+</script>  {% endcomment %}
 
 
     <!-- Optional JavaScript; choose one of the two! -->

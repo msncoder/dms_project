@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from .forms import DocumentForm
 from .ocr_utils import (
     extract_text,
@@ -13,6 +13,10 @@ import os
 from PIL import Image
 import pytesseract
 from .models import Document
+from django.http import JsonResponse
+from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
+
+
 
 def upload_document(request):
     if request.method == 'POST':
@@ -77,32 +81,36 @@ def upload_document(request):
     return render(request, 'documents/upload.html', {'form': form})
 
 
-# def upload_document(request):
-#     if request.method == 'POST':
-#         form = DocumentForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             doc = form.save(commit=False)
-#             doc.user = request.user
-#             doc.save()
-
-#             # Run OCR
-#             extracted_text = extract_text(doc.file.path)
-#             doc.extracted_text = extracted_text
-
-#             # AI Summary
-#             summary = generate_summary(extracted_text)
-#             doc.summary = summary
-
-#             doc.save()
-
-#             return redirect('document_list')  # replace with your success page
+# def ajax_search_documents(request):
+#     query = request.GET.get('q', '')
+#     if query:
+#         vector = SearchVector('title', 'summary', 'category')
+#         search_query = SearchQuery(query)
+#         docs = Document.objects.annotate(
+#             rank=SearchRank(vector, search_query)
+#         ).filter(rank__gte=0.1).order_by('-rank')
 #     else:
-#         form = DocumentForm()
+#         docs = Document.objects.all().order_by('-uploaded_at')
 
-#     return render(request, 'documents/upload.html', {'form': form})
+#     results = []
+#     for doc in docs:
+#         results.append({
+#             'user': doc.user.username,
+#             'title': doc.title,
+#             'category': doc.category,
+#             'summary': doc.summary[:80],
+#             'file_url': doc.file.url,
+#             'uploaded_at': doc.uploaded_at.strftime("%d %b %Y %H:%M"),
+#         })
 
+#     return JsonResponse({'documents': results})
 
 
 def document_list(request):
     documents = Document.objects.all().order_by('-uploaded_at')  # 👈 Removed user filter
     return render(request, 'documents/list.html', {'documents': documents})
+
+
+def document_detail(request, pk):
+    document = get_object_or_404(Document, pk=pk)
+    return render(request, 'documents/detail.html', {'document': document})
