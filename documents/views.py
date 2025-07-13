@@ -67,7 +67,7 @@ def user_logout(request):
 @login_required
 def document_list(request):
     if request.user.role == 'editor':
-        documents = Document.objects.filter(user=request.user).order_by('-uploaded_at')  # 👈 Removed user filter
+        documents = Document.objects.filter(user=request.user).order_by('-uploaded_at')  
     else:
         documents = Document.objects.all().order_by('-uploaded_at')  # 👈 Removed user filter
     return render(request, 'documents/list.html', {'documents': documents})
