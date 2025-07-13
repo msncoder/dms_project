@@ -1,5 +1,8 @@
 from django.shortcuts import render, redirect,get_object_or_404
-from .forms import DocumentForm
+from django.contrib.auth import login,logout,authenticate
+from django.contrib.auth.decorators import login_required, user_passes_test
+from .forms import DocumentForm,CustomUserCreationForm
+from django.contrib import messages
 from .ocr_utils import (
     extract_text,
     extract_pdf_text,
@@ -18,6 +21,75 @@ from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 
 
 
+# Authentication starts
+
+def is_admin(user):
+    return user.is_authenticated and user.role in ['admin','superadmin']
+
+def is_editor(user):
+    return user.is_authenticated and user.role == 'editor'
+
+def register(request):
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request,user)
+            return redirect('document_list')
+        
+    else:
+        form = CustomUserCreationForm()
+    return render(request,'accounts/register.html',{'form':form})
+
+
+
+def user_login(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request,username=username,password=password)
+        if user is not None:
+            login(request,user)
+            return redirect('document_list')
+        else:
+            messages.error(request,'Invalid Credentials')
+
+    return render(request,'accounts/login.html')
+
+@login_required
+def user_logout(request):
+    logout(request)
+    return redirect('login')
+
+# authentication ends 
+        
+
+
+@login_required
+def document_list(request):
+    if request.user.role == 'editor':
+        documents = Document.objects.filter(user=request.user).order_by('-uploaded_at')  # 👈 Removed user filter
+    else:
+        documents = Document.objects.all().order_by('-uploaded_at')  # 👈 Removed user filter
+    return render(request, 'documents/list.html', {'documents': documents})
+
+@login_required
+def document_detail(request, pk):
+    document = get_object_or_404(Document, pk=pk)
+    if request.user == document.user or is_admin(request.user):
+        return render(request, 'documents/detail.html', {'document': document})
+    return redirect('document_list')
+
+@login_required
+def delete_document(request,pk):
+    document = get_object_or_404(Document, id=pk)
+    if request.user == document.user or is_admin(request.user):
+        document.delete()
+    
+    return redirect('document_list')
+
+
+@login_required
 def upload_document(request):
     if request.method == 'POST':
         form = DocumentForm(request.POST, request.FILES)
@@ -105,12 +177,3 @@ def upload_document(request):
 
 #     return JsonResponse({'documents': results})
 
-
-def document_list(request):
-    documents = Document.objects.all().order_by('-uploaded_at')  # 👈 Removed user filter
-    return render(request, 'documents/list.html', {'documents': documents})
-
-
-def document_detail(request, pk):
-    document = get_object_or_404(Document, pk=pk)
-    return render(request, 'documents/detail.html', {'document': document})
