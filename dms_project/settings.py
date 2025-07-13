@@ -137,3 +137,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# ✅ settings.py (only relevant parts)
+AUTH_USER_MODEL = 'documents.CustomUser'
+
+
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = 'document_list'
+LOGOUT_REDIRECT_URL = 'login'

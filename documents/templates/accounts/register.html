@@ -1,0 +1,58 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <title>Register</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: #ffffff;
+    }
+    .form-outline label {
+      display: block;
+      margin-bottom: 0.5rem;
+      text-align: left;
+    }
+    .form-outline input {
+      width: 100%;
+      text-align: left;
+      border-radius: 5px;
+      background-color: #2c2c2c;
+      color: white;
+      border: 1px solid #ced4da;
+    }
+  </style>
+</head>
+<body>
+<section class="vh-100">
+  <div class="container h-100 py-5">
+    <div class="row justify-content-center align-items-center h-100">
+      <div class="col-md-6">
+        <div class="card bg-dark text-white p-4">
+          <h3 class="text-center mb-4">Register</h3>
+          <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+              <div class="form-outline mb-3">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.errors %}
+                  <div class="text-danger small">{{ field.errors }}</div>
+                {% endif %}
+              </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-outline-light w-100">Sign Up</button>
+          </form>
+          <div class="mt-3 text-center">
+            <small>Already have an account? <a href="{% url 'login' %}" class="text-light">Login here</a></small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</body>
+</html>

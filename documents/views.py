@@ -62,8 +62,7 @@ def user_logout(request):
     return redirect('login')
 
 # authentication ends 
-        
-
+    
 
 @login_required
 def document_list(request):
