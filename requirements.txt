@@ -37,6 +37,7 @@ prov==2.1.1
 psycopg2-binary==2.9.10
 puremagic==1.30
 pydot==4.0.1
+pydot==4.0.1
 PyMuPDF==1.26.3
 pyparsing==3.2.3
 pytesseract==0.3.13

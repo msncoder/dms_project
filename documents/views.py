@@ -56,7 +56,7 @@ def user_login(request):
 
     return render(request,'accounts/login.html')
 
-# @login_required
+@login_required
 def user_logout(request):
     logout(request)
     return redirect('login')
@@ -64,7 +64,7 @@ def user_logout(request):
 # authentication ends 
     
 
-# @login_required
+@login_required
 def document_list(request):
     if request.user.role == 'editor':
         documents = Document.objects.filter(user=request.user).order_by('-uploaded_at')  
@@ -72,23 +72,29 @@ def document_list(request):
         documents = Document.objects.all().order_by('-uploaded_at')  # 👈 Removed user filter
     return render(request, 'documents/list.html', {'documents': documents})
 
-# @login_required
+@login_required
 def document_detail(request, pk):
     document = get_object_or_404(Document, pk=pk)
     if request.user == document.user or is_admin(request.user):
         return render(request, 'documents/detail.html', {'document': document})
     return redirect('document_list')
 
-# @login_required
-def delete_document(request,pk):
-    document = get_object_or_404(Document, id=pk)
-    if request.user == document.user or is_admin(request.user):
-        document.delete()
-    
-    return redirect('document_list')
+@login_required
+def delete_document(request, pk):
+    print("delete")
+    document = get_object_or_404(Document, pk=pk)
+    if request.method == 'POST':
+        if request.user == document.user or is_admin(request.user):
+            print("Deleting:", document.title)
+            document.delete()
+            return redirect('document_list')
+        else:
+            print("No permission to delete.")
+    return redirect('document_detail', pk=pk)
 
 
-# @login_required
+
+@login_required
 def upload_document(request):
     if request.method == 'POST':
         form = DocumentForm(request.POST, request.FILES)

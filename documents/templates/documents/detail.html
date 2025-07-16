@@ -46,8 +46,15 @@
 <div class="bg-secondary p-3 rounded table-responsive" style="max-height: 300px; overflow-y: scroll;">
       <pre class="text-white">{{ document.extracted_text }}</pre>
     </div>
-    <a href="{{ document.file.url }}" class="btn btn-outline-light mt-4 mb-4" target="_blank">View File</a>
-    <a href="{% url 'document_list' %}" class="btn btn-outline-secondary mt-4 mb-4">Back to List</a>
+    <div class="d-flex ">
+      <a href="{{ document.file.url }}" class="btn btn-outline-light mt-4 mb-4 ms-3" target="_blank">View File</a>
+    <a href="{% url 'document_list' %}" class="btn btn-outline-secondary mt-4 mb-4 ms-3">Back to List</a>
+    <form method="post" action="{% url 'delete_document' document.pk %}">
+  {% csrf_token %}
+  <button type="submit" class="btn btn-outline-danger mt-4 mb-4 ms-3">Delete</button>
+</form>
+
+    </div>
   </div>
 </body>
 </html>
