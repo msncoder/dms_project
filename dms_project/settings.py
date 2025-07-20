@@ -145,3 +145,9 @@ AUTH_USER_MODEL = 'documents.CustomUser'
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = 'document_list'
 LOGOUT_REDIRECT_URL = 'login'
+
+
+# settings.py
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'

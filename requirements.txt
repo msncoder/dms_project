@@ -1,10 +1,16 @@
 acres==0.5.0
+amqp==5.3.1
 asgiref==3.9.0
+billiard==4.2.1
 black==25.1.0
+celery==5.5.3
 certifi==2025.6.15
 charset-normalizer==3.4.2
 ci-info==0.3.0
 click==8.2.1
+click-didyoumean==0.3.1
+click-plugins==1.1.1.2
+click-repl==0.3.0
 colorama==0.4.6
 configobj==5.0.9
 configparser==7.2.0
@@ -17,6 +23,7 @@ httplib2==0.22.0
 huggingface-hub==0.33.2
 idna==3.10
 Jinja2==3.1.6
+kombu==5.5.4
 looseversion==1.3.0
 lxml==6.0.0
 MarkupSafe==3.0.2
@@ -33,10 +40,10 @@ pathspec==0.12.1
 pdf2image==1.17.0
 pillow==11.3.0
 platformdirs==4.3.8
+prompt_toolkit==3.0.51
 prov==2.1.1
 psycopg2-binary==2.9.10
 puremagic==1.30
-pydot==4.0.1
 pydot==4.0.1
 PyMuPDF==1.26.3
 pyparsing==3.2.3
@@ -48,6 +55,7 @@ pytz==2025.2
 pyxnat==1.6.3
 PyYAML==6.0.2
 rdflib==7.1.4
+redis==6.2.0
 regex==2024.11.6
 requests==2.32.4
 safetensors==0.5.3
@@ -65,4 +73,6 @@ transformers==4.53.1
 typing_extensions==4.14.1
 tzdata==2025.2
 urllib3==2.5.0
+vine==5.1.0
+wcwidth==0.2.13
 xlsxwriter==3.2.5

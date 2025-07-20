@@ -18,6 +18,8 @@ import pytesseract
 from .models import Document
 from django.http import JsonResponse
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
+from .tasks import process_document
+
 
 
 
@@ -93,7 +95,6 @@ def delete_document(request, pk):
     return redirect('document_detail', pk=pk)
 
 
-
 @login_required
 def upload_document(request):
     if request.method == 'POST':
@@ -103,59 +104,77 @@ def upload_document(request):
             doc.user = request.user
             doc.save()
 
-            file_path = doc.file.path
-            ext = os.path.splitext(file_path)[1].lower()
-
-            extracted_text = ""
-
-            try:
-                # 🖼️ Image types
-                if ext in ['.jpg', '.jpeg', '.png']:
-                    extracted_text = extract_text(file_path)
-
-                # 📄 PDF (try text, fallback to OCR)
-                elif ext == '.pdf':
-                    try:
-                        extracted_text = extract_pdf_text(file_path)
-                        if not extracted_text.strip():
-                            raise ValueError("Empty PDF text, fallback to OCR")
-                    except:
-                        extracted_text = extract_scanned_pdf_text(file_path)
-
-                # 📃 Word (.docx)
-                elif ext == '.docx':
-                    extracted_text = extract_docx_text(file_path)
-
-                # 📊 Excel
-                elif ext in ['.xls', '.xlsx']:
-                    extracted_text = extract_excel_text(file_path)
-
-                # 📽️ PowerPoint
-                elif ext in ['.ppt', '.pptx']:
-                    extracted_text = extract_pptx_text(file_path)
-
-                else:
-                    extracted_text = "Unsupported file type."
-
-                # 🤖 Summarize
-                summary = generate_summary(extracted_text)
-
-                # Save to model
-                doc.extracted_text = extracted_text
-                doc.summary = summary
-                doc.save()
-
-            except Exception as e:
-                doc.extracted_text = f"Extraction failed: {str(e)}"
-                doc.summary = "Summary generation skipped due to error."
-                doc.save()
+            # 📦 Call Celery task
+            process_document.delay(doc.id, doc.file.path)
 
             return redirect('document_list')
-
     else:
         form = DocumentForm()
-
     return render(request, 'documents/upload.html', {'form': form})
+
+
+# @login_required
+# def upload_document(request):
+#     if request.method == 'POST':
+#         form = DocumentForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             doc = form.save(commit=False)
+#             doc.user = request.user
+#             doc.save()
+
+#             file_path = doc.file.path
+#             ext = os.path.splitext(file_path)[1].lower()
+
+#             extracted_text = ""
+
+#             try:
+#                 # 🖼️ Image types
+#                 if ext in ['.jpg', '.jpeg', '.png']:
+#                     extracted_text = extract_text(file_path)
+
+#                 # 📄 PDF (try text, fallback to OCR)
+#                 elif ext == '.pdf':
+#                     try:
+#                         extracted_text = extract_pdf_text(file_path)
+#                         if not extracted_text.strip():
+#                             raise ValueError("Empty PDF text, fallback to OCR")
+#                     except:
+#                         extracted_text = extract_scanned_pdf_text(file_path)
+
+#                 # 📃 Word (.docx)
+#                 elif ext == '.docx':
+#                     extracted_text = extract_docx_text(file_path)
+
+#                 # 📊 Excel
+#                 elif ext in ['.xls', '.xlsx']:
+#                     extracted_text = extract_excel_text(file_path)
+
+#                 # 📽️ PowerPoint
+#                 elif ext in ['.ppt', '.pptx']:
+#                     extracted_text = extract_pptx_text(file_path)
+
+#                 else:
+#                     extracted_text = "Unsupported file type."
+
+#                 # 🤖 Summarize
+#                 summary = generate_summary(extracted_text)
+
+#                 # Save to model
+#                 doc.extracted_text = extracted_text
+#                 doc.summary = summary
+#                 doc.save()
+
+#             except Exception as e:
+#                 doc.extracted_text = f"Extraction failed: {str(e)}"
+#                 doc.summary = "Summary generation skipped due to error."
+#                 doc.save()
+
+#             return redirect('document_list')
+
+#     else:
+#         form = DocumentForm()
+
+#     return render(request, 'documents/upload.html', {'form': form})
 
 
 # def ajax_search_documents(request):

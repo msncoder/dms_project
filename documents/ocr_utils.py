@@ -8,6 +8,8 @@ from docx import Document as DocxDocument
 import pandas as pd
 from pptx import Presentation
 import fitz 
+from .ai_summarizer import generate_summary
+
 
 def extract_text(image_path):
     """

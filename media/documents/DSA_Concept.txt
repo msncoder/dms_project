@@ -1,0 +1,18 @@
+jb time aur operation saat grow karay tu linear graph banay ga
+jb time sy operation double hu jaye tu quadratic graph banay ga
+jb operation dive mai hongy tu us ka graph log mai banay ga
+agar loop nhi hy na recursion hy tu us ka graph constant hoga
+
+Linear DS
+array
+linked list
+stack
+queue
+hashing
+
+non linear 
+Tree 
+graph
+
+
+array ===> normal array, refrential array, dynamic array

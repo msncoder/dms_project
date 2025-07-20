@@ -148,7 +148,13 @@ tbody td {
                           <td>{{ doc.user.username }}</td>
                           <td>{{ doc.title }}</td>
                           <td>{{ doc.category }}</td>
-                          <td>{{ doc.summary|truncatechars:80 }}</td>
+                            <td>
+                              {% if doc.summary %}
+                                {{ doc.summary|truncatechars:80 }}
+                              {% else %}
+                                <span class="text-warning">⏳ Processing...</span>
+                              {% endif %}
+                            </td>
                         
 
    <td>
@@ -189,7 +195,12 @@ tbody td {
     </div>
   </div>
 </section>
-
+<script>
+  // Check every 10 seconds
+  setInterval(function () {
+    location.reload();
+  }, 10000);
+</script>
 
   <script>
   document.addEventListener('DOMContentLoaded', function () {
