@@ -115,16 +115,49 @@ tbody td {
     </form>
   </div> {% endcomment %}
 
-  <div class="d-flex justify-content-between align-items-center mb-3">
+  {% comment %} <div class="d-flex justify-content-between align-items-center mb-3">
   <div>
     <a href="{% url 'logout' %}" class="btn btn-danger btn-lg px-5 m-3 btn-hover-reverse">Logout</a>
   <a href="{% url 'upload_document' %}" class="btn btn-light btn-lg px-5 m-3 btn-hover-reverse">Upload</a>
   </div>
-  
+  <div>
+    <h1 class="text-white">Document management system</h1>
+  </div>
   <form class="d-flex">
     <input id="searchInput" class="form-control me-2 bg-dark text-white border-secondary "
            type="search" placeholder="Search documents..." aria-label="Search">
   </form>
+</div> {% endcomment %}
+
+
+<div class="container-fluid py-3">
+  <div class="d-flex flex-wrap justify-content-between align-items-center bg-dark rounded shadow p-3 mb-4">
+
+    <!-- Left Buttons -->
+    <div class="d-flex flex-wrap gap-2">
+      <a href="{% url 'logout' %}" class="btn btn-danger btn-lg px-4 btn-hover-reverse">
+        Logout
+      </a>
+      <a href="{% url 'upload_document' %}" class="btn btn-outline-light btn-lg px-4 btn-hover-reverse">
+        Upload
+      </a>
+    </div>
+
+    <!-- Center Title -->
+    <div class="text-center flex-grow-1">
+      <h1 class="text-white m-0">Document Management System</h1>
+    </div>
+
+    <!-- Search -->
+    <form class="d-flex ms-auto mt-2 mt-lg-0" role="search">
+      <input id="searchInput" 
+             class="form-control bg-dark text-white border-secondary" 
+             type="search" 
+             placeholder="Search documents..." 
+             aria-label="Search">
+    </form>
+
+  </div>
 </div>
 
 

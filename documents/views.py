@@ -105,7 +105,8 @@ def upload_document(request):
             doc.save()
 
             # 📦 Call Celery task
-            process_document.delay(doc.id, doc.file.path)
+            # process_document.delay(doc.id, doc.file.path)
+            process_document.delay(doc.id)
 
             return redirect('document_list')
     else:

@@ -43,7 +43,7 @@
 #         return self.title
 
 
-
+import uuid
 from django.contrib.auth.models import AbstractUser, BaseUserManager, Group, Permission
 from django.db import models
 
@@ -101,14 +101,36 @@ class CustomUser(AbstractUser):
 
 
 # 🔸 Step 3: Document model
+# class Document(models.Model):
+#     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+#     title = models.CharField(max_length=255)
+#     category = models.CharField(max_length=100)
+#     file = models.FileField(upload_to='documents/')
+#     summary = models.TextField(blank=True, null=True)
+#     extracted_text = models.TextField(blank=True, null=True)
+#     uploaded_at = models.DateTimeField(auto_now_add=True)
+
+#     def __str__(self):
+#         return self.title
+
+
+
+# Add this on top or below the models
+import uuid
+
+def user_directory_path(instance, filename):
+    ext = filename.split('.')[-1]
+    return f'documents/{instance.user.id}/{uuid.uuid4()}.{ext}'
+
+# Inside Document model:
 class Document(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     category = models.CharField(max_length=100)
-    file = models.FileField(upload_to='documents/')
+    
+    # 👇 Updated
+    file = models.FileField(upload_to=user_directory_path)
+
     summary = models.TextField(blank=True, null=True)
     extracted_text = models.TextField(blank=True, null=True)
     uploaded_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.title
